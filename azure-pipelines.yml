@@ -23,7 +23,7 @@ variables:
 
 steps:
   - displayName: 'Check Go version'
-    shell: go version
+    script: go version
 
   - displayName: 'Set up the Go workspace'
     script: |
