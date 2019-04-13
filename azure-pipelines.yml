@@ -36,8 +36,7 @@ steps:
       echo '##vso[task.prependpath]$(GOROOT)/bin'
     displayName: 'Set up the Go workspace'
 
-  - workingDirectory: '$(modulePath)'
-    script: |
+  - script: |
       go version
       go get -v -t -d ./...
       if [ -f Gopkg.toml ]; then
@@ -45,4 +44,5 @@ steps:
           dep ensure
       fi
       go build -v .
+    workingDirectory: '$(modulePath)'
     displayName: 'Get dependencies, then build'
