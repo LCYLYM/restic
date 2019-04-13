@@ -22,8 +22,8 @@ variables:
   modulePath: '$(GOPATH)/src/github.com/$(build.repository.name)'
 
 steps:
-  - displayName: 'Check Go version'
-    script: go version
+  - script: go version
+    displayName: 'Check Go version'
 
   - displayName: 'Set up the Go workspace'
     script: |
