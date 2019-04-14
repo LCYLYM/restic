@@ -27,7 +27,7 @@ steps:
       ls -al
     displayName: 'Check environment'
 
-  - script:
+  - script: |
       go version
       go env
     displayName: 'Check Go version'
