@@ -16,29 +16,25 @@ pool:
   vmImage: 'Ubuntu-16.04'
 
 variables:
-  GOROOT: '/usr/local/go'
-  GOBIN: '$(system.defaultWorkingDirectory)/../bin'
+  goRootDir: '/usr/local'
   TargetGoVersion: 1.12.4
 
 steps:
-  # checkout the repo as a shallow copy
-  - checkout: self
-    clean: true
-    fetchDepth: 1
-
   # download Go, make sure that GOBIN and GOROOT/bin are inserted at the
   # beginning of the PATH
   - bash: |
       cd /tmp
-      wget -O go.linux-amd64.tar.gz "https://golang.org/dl/go$(TargetGoVersion).linux-amd64.tar.gz"
-      sudo tar -C /usr/local -xzf go.linux-amd64.tar.gz
-      echo '##vso[task.prependpath]$(GOBIN)'
-      echo '##vso[task.prependpath]$(GOROOT)/bin'
+      wget --quiet --output-document go.linux-amd64.tar.gz "https://golang.org/dl/go$(TargetGoVersion).linux-amd64.tar.gz"
+      sudo tar --directory '$(goRootDir)' -xzf go.linux-amd64.tar.gz
+      GOBIN=$($(goRootDir)/bin/go env GOBIN)
+      echo "##vso[task.prependpath]${GOBIN}"
+      echo "##vso[task.prependpath]$(goRootDir)/bin"
     displayName: 'Download Go'
 
   - script: |
       go version
       go env
+      echo "path: $PATH"
     displayName: 'Check Go version'
 
   - script: |
