@@ -26,11 +26,10 @@ steps:
       cd /tmp
       wget --quiet --output-document go.linux-amd64.tar.gz "https://golang.org/dl/go$(TargetGoVersion).linux-amd64.tar.gz"
       sudo tar --directory '$(goRootDir)' -xzf go.linux-amd64.tar.gz
-      PATH="$(goRootDir)/go/bin:$PATH"
-      go version
-      go env GOBIN
-      echo "##vso[task.prependpath]$(go env GOBIN)"
-      echo "##vso[task.prependpath]$(GOROOT)/bin"
+      GOBIN="$HOME/go/bin"
+      echo "##vso[task.setvariable variable=GOBIN]${GOBIN}"
+      echo "##vso[task.prependpath]${GOBIN}"
+      echo "##vso[task.prependpath]$(goRootDir)/go/bin"
     displayName: 'Download Go'
 
   - script: |
