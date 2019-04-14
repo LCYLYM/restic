@@ -21,6 +21,11 @@ variables:
   TargetGoVersion: 1.12.4
 
 steps:
+  # checkout the repo as a shallow copy
+  - checkout: self
+    clean: true
+    fetchDepth: 1
+
   # download Go, make sure that GOBIN and GOROOT/bin are inserted at the
   # beginning of the PATH
   - bash: |
@@ -37,5 +42,5 @@ steps:
     displayName: 'Check Go version'
 
   - script: |
-      go -mod=vendor test ./...
+      go test -mod=vendor ./...
     displayName: 'Run the tests'
