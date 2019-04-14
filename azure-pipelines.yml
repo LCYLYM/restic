@@ -26,7 +26,8 @@ steps:
       cd /tmp
       wget --quiet --output-document go.linux-amd64.tar.gz "https://golang.org/dl/go$(TargetGoVersion).linux-amd64.tar.gz"
       sudo tar --directory '$(goRootDir)' -xzf go.linux-amd64.tar.gz
-      GOBIN=$($(goRootDir)/bin/go env GOBIN)
+      GOBIN=`$(goRootDir)/bin/go env GOBIN`
+      echo "GOBIN: ${GOBIN}"
       echo "##vso[task.prependpath]${GOBIN}"
       echo "##vso[task.prependpath]$(goRootDir)/bin"
     displayName: 'Download Go'
