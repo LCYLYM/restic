@@ -22,6 +22,11 @@ variables:
   modulePath: '$(GOPATH)/src/github.com/$(build.repository.name)'
 
 steps:
+  - bash: |
+      echo "current dir: $(pwd)"
+      ls -al
+    displayName: 'Check environment'
+
   - script: go version
     displayName: 'Check Go version'
 
