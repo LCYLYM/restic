@@ -16,16 +16,20 @@ pool:
   vmImage: 'Ubuntu-16.04'
 
 variables:
-  GOBIN: '$(GOPATH)/bin'
-  GOROOT: '/usr/local/go1.11'
-  GOPATH: '$(system.defaultWorkingDirectory)/gopath'
-  modulePath: '$(GOPATH)/src/github.com/$(build.repository.name)'
+  GOROOT: '/usr/local/go'
+  GOBIN: '$(system.defaultWorkingDirectory)/../bin'
+  TargetGoVersion: 1.12.4
 
 steps:
+  # download Go, make sure that GOBIN and GOROOT/bin are inserted at the
+  # beginning of the PATH
   - bash: |
-      echo "current dir: $(pwd)"
-      ls -al
-    displayName: 'Check environment'
+      cd /tmp
+      wget -O go.linux-amd64.tar.gz "https://golang.org/dl/go$(TargetGoVersion).linux-amd64.tar.gz"
+      sudo tar -C /usr/local -xzf go.linux-amd64.tar.gz
+      echo '##vso[task.prependpath]$(GOBIN)'
+      echo '##vso[task.prependpath]$(GOROOT)/bin'
+    displayName: 'Download Go'
 
   - script: |
       go version
@@ -33,23 +37,5 @@ steps:
     displayName: 'Check Go version'
 
   - script: |
-      mkdir -p '$(GOBIN)'
-      mkdir -p '$(GOPATH)/pkg'
-      mkdir -p '$(modulePath)'
-      shopt -s extglob
-      shopt -s dotglob
-      mv !(gopath) '$(modulePath)'
-      echo '##vso[task.prependpath]$(GOBIN)'
-      echo '##vso[task.prependpath]$(GOROOT)/bin'
-    displayName: 'Set up the Go workspace'
-
-  - script: |
-      go version
-      go get -v -t -d ./...
-      if [ -f Gopkg.toml ]; then
-          curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
-          dep ensure
-      fi
-      go build -v .
-    workingDirectory: '$(modulePath)'
-    displayName: 'Get dependencies, then build'
+      go -mod=vendor test ./...
+    displayName: 'Run the tests'
